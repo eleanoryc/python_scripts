@@ -5,18 +5,23 @@ import getopt
 
 def main(argv):
    inputfile = ''
+   if len(sys.argv) <= 1:
+      print 'usage:  argument.py -i <inputfile>'
+      exit(1)
+
    try:
       opts, args = getopt.getopt(argv,"hi:",["ifile="])
    except getopt.GetoptError:
       print 'usage:  argument.py -i <inputfile>'
       sys.exit(2)
+
    for opt, arg in opts:
       if opt == '-h':
          print 'usage:  argument.py -i <inputfile>'
          sys.exit()
       elif opt in ("-i", "--ifile"):
          inputfile = arg
-   print 'Input file is', inputfile
+         print 'Input file is', inputfile
 
 
 if __name__ == "__main__":
