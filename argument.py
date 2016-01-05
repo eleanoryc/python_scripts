@@ -3,10 +3,14 @@
 import sys
 import getopt
 
+
+def usage():
+   print 'usage:  argument.py -i <inputfile>'
+
 def main(argv):
    inputfile = ''
    if len(sys.argv) <= 1:
-      print 'usage:  argument.py -i <inputfile>'
+      usage()
       exit(1)
 
    try:
@@ -17,12 +21,12 @@ def main(argv):
 
    for opt, arg in opts:
       if opt == '-h':
-         print 'usage:  argument.py -i <inputfile>'
+         usage()
+         #print 'usage:  argument.py -i <inputfile>'
          sys.exit()
       elif opt in ("-i", "--ifile"):
          inputfile = arg
          print 'Input file is', inputfile
-
 
 if __name__ == "__main__":
    main(sys.argv[1:])
