@@ -1,5 +1,5 @@
 import re
-with open ("manylines", "r") as rFileHandle:
+with open ("ManyLines.txt", "r") as rFileHandle:
     newline = ''
     for line in rFileHandle:
        regexline = re.compile("\"$")
