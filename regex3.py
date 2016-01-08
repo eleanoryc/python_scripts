@@ -4,10 +4,17 @@
 
 import re
 
-regexline = re.comile('^#|^\s*$')
-
+regexline = re.compile('^#|^\s*$')
 with open('testfile.txt','r') as rFile:
     for l in rFile:
-        if no regexline.search(l):
-            print l
+        if not regexline.search(l):
+            print l.strip()
+
+
+### or
+print
+with open('testfile.txt','r') as rFile:
+    for l in rFile:
+        if not re.search(r'^#|^\s*$',l):
+            print l.strip()
 
