@@ -1,6 +1,6 @@
 """
-    The script will parse JSON output from Config Checker and Smoke Tests
-    extract the failed tests.
+    The script will parse JSON output of Config Checker and Smoke Tests
+    display the failed tests.
     
     @Author Eleanor Cheung
     @contact: aru@salesforce.com
@@ -61,11 +61,11 @@ def main(argv=None):
             parser.print_help()
             exit(1)
         if rtype == 'configchecker':
-             url += 'config-checker' + '&instance=' + pod
-             configchecker(url,pod)             
+            url += 'config-checker' + '&instance=' + pod
+            configchecker(url,pod)             
         if rtype == 'prodtest':
-             url += 'smoke-test' + '&instance=' + pod
-             prodtest(url,pod) 
+            url += 'smoke-test' + '&instance=' + pod
+            prodtest(url,pod) 
 
     exit(0)
 

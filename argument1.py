@@ -14,7 +14,6 @@ def main(argv=None):
     if args.rtype:
         rtype = args.rtype
         if ( rtype != 'configchecker' ) and ( rtype != 'prodtest' ):
-        #if rtype != 'configchecker':
             print 'error'
             exit(1)
         if rtype == 'configchecker':
