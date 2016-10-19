@@ -4,7 +4,7 @@
     It will display the check with status ALERTED for config checker.
     
     @Author Eleanor Cheung
-    @contact: aru@salesforce.com
+    @contact: echeung@salesforce.com
 
 """
 
