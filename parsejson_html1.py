@@ -7,7 +7,7 @@
     @contact: echeung@salesforce.com
 
     TODO:  support multiple pods - done
-           generate HTML report - currently the output is display on the terminal - in progress
+           generate HTML report - currently the output is display on the terminal - done
            send report to email address
 """
 
@@ -24,6 +24,9 @@ def parsesmoketest(p_list):
     content = ''
     failtest = ''
     allcontent = ''
+    divnum = 0
+    hide = 'hide'
+    show = 'show'
 
     #if rtype == 'smoketest':
     report = 'smoke-test'
@@ -52,11 +55,19 @@ def parsesmoketest(p_list):
                 realdata = json_data['observations']
                 for d in realdata:
                     if realdata[d] == 'failed':
+                        divnum += 1
+                        hide += str(divnum)
+                        show += str(divnum)
                         failtest += """<P>Status:  """ + realdata[d] + """<br>Category:  """ + realdata['category'] + """<br> Failure:  """ + realdata['failure'] + """<br> Owner: """ + realdata['owner'] + """</P>"""
                     if realdata[d] == 'error':
                         failtest += """<P>Status:  """ + realdata[d] + """<br>Category:  """ + realdata['category'] + """<br> Error:  """ + realdata['error'] + """<br> Owner: """ + realdata['owner'] + """</P>"""
                     if realdata[d] == 'skipped':
                         failtest += """<P>Status:  """ + realdata[d] + """<br>Category:  """ + realdata['category'] + """<br> Owner: """ + realdata['owner'] + """</P>"""
+
+                               #<div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ message:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['message'] + """</div>\n</div></P>"""
+
+                        hide = 'hide'
+                        show = 'show'
 
                 #for k in realdata.keys():
                 #    if k == 'failed':
@@ -68,8 +79,7 @@ def parsesmoketest(p_list):
 
         content += """<td width="970px">""" + failtest + """</td></tr></table><br>\n"""
         failtest = ''
-#        print 'Content:'
-#        print content
+        divnum = 0
         allcontent += content
     generatehtmlReport(allcontent,p_list)
 
@@ -91,7 +101,7 @@ def parseconfigchecker(p_list):
 
     for pod in p_list:
         content = ''
-        content = """<table border=1 width="1100px"><tr><td bgcolor=#2ECCFA width="120px">Pod: </td><td bgcolor=#2ECCFA width="970px">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width="120px">""" + report + """:\n</td>"""
+        content = """<table border=1 width=\"1100px\"><tr><td bgcolor=#2ECCFA width=\"120px\">Pod: </td><td bgcolor=#2ECCFA width=\"970px\">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width=\"120px\">""" + report + """:\n</td>"""
         print pod, report, ":"
 
         rURL = URL + report + '&instance=' + pod
@@ -109,25 +119,18 @@ def parseconfigchecker(p_list):
                 realdata = json_data['observations']
                 for d in realdata:
                     if realdata[d] == 'ALERT':
-                        #failtest += """<P>state:  """ + realdata[d] + """<br>checkerName:  """ + realdata['checkerName'] + """<br> message:  """ + realdata['message'] + """</P>"""
-
                         divnum += 1
                         hide += str(divnum)
                         show += str(divnum)
-                        #failtest += """<P>state:  """ + realdata[d] + """<br>checkerName:  """ + realdata['checkerName'] + """<br> 
-                        #       <div> <a id=\" """ + hide + """\" href=\"# """ + hide + """\" class=\"hide\">+ message:</a> <a id=\" """ + show + """\" href=\"# """ + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['message'] + """</div>\n</div></P>"""
-
-                        failtest += """<P>state:  """ + realdata[d] + """<br>checkerName:  """ + realdata['checkerName'] + """<br> 
+                        failtest += """<P>state:  """ + realdata[d] + """<br>checkerName:  """ + realdata['checkerName'] + """ 
                                <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ message:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['message'] + """</div>\n</div></P>"""
 
                         hide = 'hide'
                         show = 'show'
 
-        content += """<td width="970">""" + failtest + """</td></tr></table><br>\n"""
+        content += """<td width=\"970px\">""" + failtest + """</td></tr></table><br>\n"""
         failtest = ''
         divnum = 0
-        #print 'Content:'
-        #print content
         allcontent += content
     generatehtmlReport(allcontent,p_list)
 
@@ -139,7 +142,7 @@ def generatehtmlReport(htmlContent,p_list):
 # close the file when it's done
 # output to the screen the location and name of the file
     allpods = ''
-    htmlHeader = """<html><head>\n<STYLE TYPE=\"text/css\"><!--\n
+    htmlHeaderCSS = """<html><head>\n<STYLE TYPE=\"text/css\"><!--\n
     .details,
     .show,
     .hide:target {
@@ -153,17 +156,17 @@ def generatehtmlReport(htmlContent,p_list):
 
     for pod in p_list:
        allpods += pod + " "
+
     htmlTitle = "<H3> Report for " + allpods + "</H3>"
-    #htmlTableOpen = "<table border=1>"
-    #htmlTableClose = "</table>"
     htmlEndTag = "<br><br>\n</body>\n</html>"
+
     timestamp = time.strftime('%Y%m%d%H%M%S')
     htmlFileName = 'report' + timestamp + '.html'
+
     with open(htmlFileName,'w') as htmlFileHandle: 
-        htmlFileHandle.write(htmlHeader)
+        htmlFileHandle.write(htmlHeaderCSS)
         htmlFileHandle.write(htmlTitle)
         htmlFileHandle.write(htmlContent)
-     #   htmlFileHandle.write(htmlTableClose)
         htmlFileHandle.write(htmlEndTag)
         htmlFileHandle.close()
 
@@ -188,13 +191,12 @@ def main(argv=None):
     if args.pods:
         pod_list = args.pods
         p_list = pod_list.upper().split(",")
-#        print type(p_list)
 
     if args.rtype:
         rtype = args.rtype
         print rtype
 
-        if ( rtype != 'configchecker' ) and ( rtype != 'prodtest' ):
+        if ( rtype != 'configchecker' ) and ( rtype != 'smoketest' ):
             parser.print_help()
             exit(1)
         if ( rtype == 'configchecker' ):
