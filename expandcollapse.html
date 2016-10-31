@@ -1,0 +1,32 @@
+<html>
+<head>
+  <title>collapse text</title>
+  <style type="text/css">
+    .details,
+    .show,
+    .hide:target {
+       display: none;
+    }
+    .hide:target + .show,
+    .hide:target ~ .details {
+       display: block;
+    }
+</style>
+</head>
+<body>
+<div>
+  <a id="hide1" href="#hide1" class="hide">+ Error</a>
+  <a id="show1" href="#show1" class="show">- Error</a>
+  <div class="details">
+    Content goes here.
+  </div>
+</div>
+<div>
+  <a id="hide2" href="#hide2" class="hide">+ Summary goes here</a>
+  <a id="show2" href="#show2" class="show">- Summary goes here</a>
+  <div class="details">
+    Content goes here.
+  </div>
+</div>
+</body>
+</html>
