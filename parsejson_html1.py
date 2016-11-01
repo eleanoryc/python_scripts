@@ -25,8 +25,6 @@ def parsesmoketest(p_list):
     failtest = ''
     allcontent = ''
     divnum = 0
-    hide = 'hide'
-    show = 'show'
 
     #if rtype == 'smoketest':
     report = 'smoke-test'
@@ -37,7 +35,7 @@ def parsesmoketest(p_list):
 
     for pod in p_list:
         content = ''
-        content = """<table border=1 width="1100px"><tr><td bgcolor=#2ECCFA width="120px">Pod: </td><td bgcolor=#2ECCFA width="970px">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width="120px">""" + report + """:\n</td>"""
+        content = """<table border=1 width="1100px"><tr><td bgcolor=#2ECCFA width="120px">Pod: </td><td bgcolor=#2ECCFA width="970px">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width="120px">""" + report.title() + """:\n</td>"""
         print pod, report, ":"
 
         rURL = URL + report + '&instance=' + pod
@@ -56,30 +54,25 @@ def parsesmoketest(p_list):
                 for d in realdata:
                     if realdata[d] == 'failed':
                         divnum += 1
-                        hide += str(divnum)
-                        show += str(divnum)
-                        failtest += """<P>Status:  """ + realdata[d] + """<br>Category:  """ + realdata['category'] + """<br> Failure:  """ + realdata['failure'] + """<br> Owner: """ + realdata['owner'] + """</P>"""
+                        hide, show = processdiv(divnum)
+                        failtest += """<P>Category:  """ + realdata['category'] + """<br>Status:  """ + realdata[d] + """
+                            <br>Owner: """ + realdata['owner'] +  """
+                            <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ Failure:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['failure'] + """</div>\n</div></P>""" 
+
                     if realdata[d] == 'error':
-                        failtest += """<P>Status:  """ + realdata[d] + """<br>Category:  """ + realdata['category'] + """<br> Error:  """ + realdata['error'] + """<br> Owner: """ + realdata['owner'] + """</P>"""
+                        divnum += 1
+                        hide, show = processdiv(divnum)
+                        failtest += """<P>Category:  """ + realdata['category'] + """<br>Status:  """ + realdata[d] + """
+                            <br>Owner: """ + realdata['owner'] +  """
+                            <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ Error:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['error'] + """</div>\n</div></P>""" 
+
                     if realdata[d] == 'skipped':
-                        failtest += """<P>Status:  """ + realdata[d] + """<br>Category:  """ + realdata['category'] + """<br> Owner: """ + realdata['owner'] + """</P>"""
+                        failtest += """<P>Category:  """ + realdata['category'] + """<br>Status:  """ + realdata[d] + """<br> Owner: """ + realdata['owner'] + """</P>"""
 
-                               #<div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ message:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['message'] + """</div>\n</div></P>"""
-
-                        hide = 'hide'
-                        show = 'show'
-
-                #for k in realdata.keys():
-                #    if k == 'failed':
-                #        failtest += "<P>" + k + ":  "+ realdata[k] + "<br>Category:  " + realdata['category'] + "<br> Failure:  " + realdata['failure'] + "</P>"
-                #    if k == 'error':
-                #        failtest += "<P>" + k + ":  " + realdata[k] + "<br>Category:  " + realdata['category'] + "<br> Error:  " + realdata['error'] + "</P>"
-                #    if k == 'skipped':
-                #        failtest += "<P>" + k + ":  " + realdata[k] + "<br>Category:  " + realdata['category'] + "</P>"
 
         content += """<td width="970px">""" + failtest + """</td></tr></table><br>\n"""
         failtest = ''
-        divnum = 0
+        #divnum = 0
         allcontent += content
     generatehtmlReport(allcontent,p_list)
 
@@ -89,8 +82,6 @@ def parseconfigchecker(p_list):
     failtest = ''
     allcontent = ''
     divnum = 0
-    hide = 'hide'
-    show = 'show'
 
     #if rtype == 'configchecker':
     report = 'config-checker'
@@ -101,7 +92,7 @@ def parseconfigchecker(p_list):
 
     for pod in p_list:
         content = ''
-        content = """<table border=1 width=\"1100px\"><tr><td bgcolor=#2ECCFA width=\"120px\">Pod: </td><td bgcolor=#2ECCFA width=\"970px\">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width=\"120px\">""" + report + """:\n</td>"""
+        content = """<table border=1 width=\"1100px\"><tr><td bgcolor=#2ECCFA width=\"120px\">Pod: </td><td bgcolor=#2ECCFA width=\"970px\">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width=\"120px\">""" + report.title() + """:\n</td>"""
         print pod, report, ":"
 
         rURL = URL + report + '&instance=' + pod
@@ -120,19 +111,20 @@ def parseconfigchecker(p_list):
                 for d in realdata:
                     if realdata[d] == 'ALERT':
                         divnum += 1
-                        hide += str(divnum)
-                        show += str(divnum)
-                        failtest += """<P>state:  """ + realdata[d] + """<br>checkerName:  """ + realdata['checkerName'] + """ 
+                        hide, show = processdiv(divnum)
+                        failtest += """<P>checkerName:  """ + realdata['checkerName'] + """ <br>state:  """ + realdata[d] + """ 
                                <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ message:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['message'] + """</div>\n</div></P>"""
-
-                        hide = 'hide'
-                        show = 'show'
 
         content += """<td width=\"970px\">""" + failtest + """</td></tr></table><br>\n"""
         failtest = ''
-        divnum = 0
+        #divnum = 0
         allcontent += content
     generatehtmlReport(allcontent,p_list)
+
+def processdiv(num):
+    h = 'hide' + str(num)
+    s = 'show' + str(num)
+    return h, s
 
 def generatehtmlReport(htmlContent,p_list):
 
@@ -152,12 +144,12 @@ def generatehtmlReport(htmlContent,p_list):
     .hide:target ~ .details {
        display: block;
     }
-    H3{font-family: verdana; font-size: 20pt;}\nTD{font-family: verdana; font-size: 10pt;}\n--->\n</STYLE>\n<body>"""
+    H3{font-family: verdana; font-size: 22pt;}\nTD{font-family: verdana; font-size: 10pt;}\n--->\n</STYLE>\n<body>"""
 
     for pod in p_list:
        allpods += pod + " "
 
-    htmlTitle = "<H3> Report for " + allpods + "</H3>"
+    htmlTitle = "<H3>" + rtype.title() + " Report for " + allpods + "</H3>"
     htmlEndTag = "<br><br>\n</body>\n</html>"
 
     timestamp = time.strftime('%Y%m%d%H%M%S')
@@ -176,8 +168,6 @@ def generatehtmlReport(htmlContent,p_list):
 
 def main(argv=None):
 
-    #url = "https://imt.dmz.salesforce.com/api/v1/observers/reports/?provider="
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--rtype', help="configchecker or smoketest")
     parser.add_argument('--pods', help="specify the instances (comma separated)")
@@ -193,6 +183,7 @@ def main(argv=None):
         p_list = pod_list.upper().split(",")
 
     if args.rtype:
+        global rtype
         rtype = args.rtype
         print rtype
 
@@ -204,7 +195,6 @@ def main(argv=None):
         if ( rtype == 'smoketest' ):
             parsesmoketest(p_list)
         #parsereport(rtype,p_list)
- 
 
     exit(0)
 
