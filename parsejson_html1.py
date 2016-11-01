@@ -115,10 +115,11 @@ def parseconfigchecker(p_list):
 #                pprint(json_data)
                 realdata = json_data['observations']
                 for d in realdata:
-                    if realdata[d] == 'ALERT':
+                    if realdata[d] == 'ALERT' or realdata[d] == 'WARNING':
                         divnum += 1
                         hide, show = processdiv(divnum)
                         failtest += """<P>checkerName:  """ + realdata['checkerName'] + """ <br>state:  """ + realdata[d] + """ 
+                               <br>troubleShootingMessage: """ + realdata['troubleShootingMessage'] + """
                                <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ message:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['message'] + """</div>\n</div></P>"""
 
         content += """<td width=\"970px\">""" + failtest + """</td></tr></table><br>\n"""
