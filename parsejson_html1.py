@@ -36,11 +36,17 @@ def parsesmoketest(p_list):
     for pod in p_list:
         content = ''
         content = """<table border=1 width="1100px"><tr><td bgcolor=#2ECCFA width="120px">Pod: </td><td bgcolor=#2ECCFA width="970px">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width="120px">""" + report.title() + """:\n</td>"""
-        print pod, report, ":"
+        print pod, report
 
         rURL = URL + report + '&instance=' + pod
         print 'URL:', rURL
-        response = requests.get(rURL, verify=False)
+        #response = requests.get(rURL, verify=False)
+        try:
+            response = requests.get(rURL, verify=False)
+        except requests.exceptions.RequestException as err:
+            print err
+            print("check if you're SFM Auth")
+            sys.exit(1)
         data = response.json()
         if not data:
             print pod, ' has no report for ' + report + ' in IMT'
@@ -57,14 +63,14 @@ def parsesmoketest(p_list):
                         hide, show = processdiv(divnum)
                         failtest += """<P>Category:  """ + realdata['category'] + """<br>Status:  """ + realdata[d] + """
                             <br>Owner: """ + realdata['owner'] +  """
-                            <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ Failure:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['failure'] + """</div>\n</div></P>""" 
+                            <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ Failure:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- failure:</a> <div class=\"details\">  """ + realdata['failure'] + """</div>\n</div></P>""" 
 
                     if realdata[d] == 'error':
                         divnum += 1
                         hide, show = processdiv(divnum)
                         failtest += """<P>Category:  """ + realdata['category'] + """<br>Status:  """ + realdata[d] + """
                             <br>Owner: """ + realdata['owner'] +  """
-                            <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ Error:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['error'] + """</div>\n</div></P>""" 
+                            <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ Error:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- error:</a> <div class=\"details\">  """ + realdata['error'] + """</div>\n</div></P>""" 
 
                     if realdata[d] == 'skipped':
                         failtest += """<P>Category:  """ + realdata['category'] + """<br>Status:  """ + realdata[d] + """<br> Owner: """ + realdata['owner'] + """</P>"""
