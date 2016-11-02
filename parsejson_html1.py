@@ -26,28 +26,25 @@ def parsesmoketest(p_list):
     allcontent = ''
     divnum = 0
 
-    #if rtype == 'smoketest':
     report = 'smoke-test'
-    #statuslist = ['failed','error','skipped']
-    # status, category, failure
-    #field = 'category'
-    #field = ['category','failure']
 
     for pod in p_list:
         content = ''
         content = """<table border=1 width="1100px"><tr><td bgcolor=#2ECCFA width="120px">Pod: </td><td bgcolor=#2ECCFA width="970px">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width="120px">""" + report.title() + """:\n</td>"""
         print pod, report
 
-        rURL = URL + report + '&instance=' + pod
-        print 'URL:', rURL
-        #response = requests.get(rURL, verify=False)
-        try:
-            response = requests.get(rURL, verify=False)
-        except requests.exceptions.RequestException as err:
-            print err
-            print("check if you're SFM Auth")
-            sys.exit(1)
-        data = response.json()
+#        rURL = URL + report + '&instance=' + pod
+#        print 'URL:', rURL
+#        #response = requests.get(rURL, verify=False)
+#        try:
+#            response = requests.get(rURL, verify=False)
+#        except requests.exceptions.RequestException as err:
+#            print err
+#            print("check if you're SFM Auth")
+#            sys.exit(1)
+#        data = response.json()
+
+        (data, rURL) = verifyURL(pod,report) 
         if not data:
             print pod, ' has no report for ' + report + ' in IMT'
 #            exit(0)
@@ -76,12 +73,33 @@ def parsesmoketest(p_list):
                         failtest += """<P>Category:  """ + realdata['category'] + """<br>Status:  """ + realdata[d] + """<br> Owner: """ + realdata['owner'] + """</P>"""
 
 
+            failtest += """<br>URL: <a href=\"""" + rURL + """\">""" +  rURL + """</a>""" 
         content += """<td width="970px">""" + failtest + """</td></tr></table><br>\n"""
         failtest = ''
         #divnum = 0
         allcontent += content
     generatehtmlReport(allcontent,p_list)
 
+def verifyURL(pod,report):
+    # some of the JSON output stored in IMT are Caps (eg. CS89), some are lower case (eg. cs88)
+    # so, create this function to check if the URL exists for CS89, or cs88.
+    # return the data, and the actual URL link
+
+    global URL
+    tURL1 = URL + report + '&instance=' + pod.upper()
+    tURL2 = URL + report + '&instance=' + pod.lower()
+    response1 = requests.get(tURL1, verify=False)
+    response2 = requests.get(tURL2, verify=False)
+    data1 = response1.json()
+    data2 = response2.json()
+    if not data1 and not data2:
+        return (data1, tURL1)
+        print pod, ' has no report for ' + report + ' in IMT'
+    elif data1:
+        return (data1, tURL1)
+    elif data2:
+        return (data2, tURL2)
+    
 def parseconfigchecker(p_list):
     global URL
     content = ''
@@ -89,22 +107,20 @@ def parseconfigchecker(p_list):
     allcontent = ''
     divnum = 0
 
-    #if rtype == 'configchecker':
     report = 'config-checker'
-#    statuslist = ['ALERT']
-        # state, checkerName, message
-        #field = 'checkerName'
-#    field = ['checkerName','message']
 
     for pod in p_list:
         content = ''
         content = """<table border=1 width=\"1100px\"><tr><td bgcolor=#2ECCFA width=\"120px\">Pod: </td><td bgcolor=#2ECCFA width=\"970px\">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width=\"120px\">""" + report.title() + """:\n</td>"""
         print pod, report, ":"
 
-        rURL = URL + report + '&instance=' + pod
-        print 'URL:', rURL
-        response = requests.get(rURL, verify=False)
-        data = response.json()
+        #rURL = URL + report + '&instance=' + pod
+        #print 'URL:', rURL
+
+        (data, rURL) = verifyURL(pod,report) 
+
+       # response = requests.get(rURL, verify=False)
+       # data = response.json()
         if not data:
             print pod, ' has no report for ' + report + ' in IMT'
 #            exit(0)
@@ -122,6 +138,7 @@ def parseconfigchecker(p_list):
                                <br>troubleShootingMessage: """ + realdata['troubleShootingMessage'] + """
                                <div> <a id=\"""" + hide + """\" href=\"#""" + hide + """\" class=\"hide\">+ message:</a> <a id=\"""" + show + """\" href=\"#""" + show + """\" class=\"show\">- message:</a> <div class=\"details\">  """ + realdata['message'] + """</div>\n</div></P>"""
 
+            failtest += """<br>URL: <a href=\"""" + rURL + """\">""" +  rURL + """</a>""" 
         content += """<td width=\"970px\">""" + failtest + """</td></tr></table><br>\n"""
         failtest = ''
         #divnum = 0
@@ -129,6 +146,8 @@ def parseconfigchecker(p_list):
     generatehtmlReport(allcontent,p_list)
 
 def processdiv(num):
+    # this function is mainly used to generate the variable for hiding/showing the content in the HTML report.  
+    # note that hide/show need to be incremental in the HTML report.
     h = 'hide' + str(num)
     s = 'show' + str(num)
     return h, s
@@ -201,7 +220,6 @@ def main(argv=None):
             parseconfigchecker(p_list)
         if ( rtype == 'smoketest' ):
             parsesmoketest(p_list)
-        #parsereport(rtype,p_list)
 
     exit(0)
 
