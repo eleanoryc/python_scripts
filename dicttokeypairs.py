@@ -4,6 +4,7 @@ arg = 'Name:Zara,Age:7,Class:First'
 dict = {}
 
 keyTokens = arg.split(",")
+print keyTokens
 for tokens in keyTokens:
     keyPairs = tokens.split(":")
     print keyPairs

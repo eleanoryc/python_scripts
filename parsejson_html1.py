@@ -1,14 +1,11 @@
 """
-    The script will parse JSON output of Config Checker and Smoke Tests
+    The script will parse JSON output of Config Checker and Smoke Tests in IMT.
     It will display the check with status failed/skipped/error tests for Smoke Tests.
-    It will display the check with status ALERTED for config checker.
+    It will display the check with status ALERTED/WARNING for config checker.
     
     @Author Eleanor Cheung
     @contact: echeung@salesforce.com
 
-    TODO:  support multiple pods - done
-           generate HTML report - done
-           post the HTML report to IMT - talking to Ben
 """
 
 import argparse,sys
@@ -87,7 +84,8 @@ def verifyURL(pod,report):
     data1 = response1.json()
     data2 = response2.json()
     if not data1 and not data2:
-        return (data1, tURL1)
+        tURL = 'no URL'
+        return (data1, tURL)
         print pod, ' has no report for ' + report + ' in IMT'
     elif data1:
         return (data1, tURL1)
@@ -108,13 +106,8 @@ def parseconfigchecker(p_list):
         content = """<table border=1 width=\"1100px\"><tr><td bgcolor=#2ECCFA width=\"120px\">Pod: </td><td bgcolor=#2ECCFA width=\"970px\">""" + pod + """</td></tr>\n""" + """<tr><td valign=top width=\"120px\">""" + report.title() + """:\n</td>"""
         print pod, report, ":"
 
-        #rURL = URL + report + '&instance=' + pod
-        #print 'URL:', rURL
-
         (data, rURL) = verifyURL(pod,report) 
 
-       # response = requests.get(rURL, verify=False)
-       # data = response.json()
         if not data:
             print pod, ' has no report for ' + report + ' in IMT'
 #            exit(0)
@@ -140,7 +133,7 @@ def parseconfigchecker(p_list):
 
 def processdiv(num):
     # this function is mainly used to generate the variable for hiding/showing the content in the HTML report.  
-    # note that hide/show need to be incremental in the HTML report.
+    # note that hide/show needs to be incremental in the HTML report.  eg. hide1, hide2, hide3...
     h = 'hide' + str(num)
     s = 'show' + str(num)
     return h, s
@@ -185,12 +178,13 @@ def generatehtmlReport(htmlContent,p_list):
     filename = cwd + '/' + htmlFileName
     print 'HTML Report:  ', filename
 
+    exit(0)
+
 def main(argv=None):
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--rtype', help="configchecker or smoketest")
     parser.add_argument('--pods', help="specify the instances (comma separated)")
-    parser.add_argument('--email', help="email address (comma separated)")
     args=parser.parse_args()
 
     if len(sys.argv) < 4:
