@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
-# for the list of *.csv files,
+
 # open one file at a time, read it, and append contents to array.  
+# When the line match with #SUMMARY, call the function to process line.
 # Save the array to a temp file.
 
 import glob

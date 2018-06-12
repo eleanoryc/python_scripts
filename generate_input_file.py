@@ -30,7 +30,7 @@ def main(argv):
       elif opt == '-o':
          outputfile = arg
    print 'Input file is ', inputfile
-   print 'Onput file is ', outputfile
+   print 'Output file is ', outputfile
 
    iFile = open(inputfile, 'r')
    oFile = open(outputfile, 'w')

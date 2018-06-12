@@ -1,9 +1,5 @@
 #! /usr/bin/env python
 
-# this is part of another script
-# to find out if a directory exists in svn or not.
-# if it does not, it will do "svn add" from the directory exists in svn
-
 import os
 
 Rootdir = '/Users/echeung/Documents/salesforce/'

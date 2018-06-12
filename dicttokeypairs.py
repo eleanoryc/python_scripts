@@ -1,10 +1,10 @@
 
 
-arg = 'Name:Zara,Age:7,Class:First'
+#keyList = {}
+list = [ 'Name': 'Zara', 'Age': 7, 'Class': 'First' ]
 dict = {}
 
-keyTokens = arg.split(",")
-print keyTokens
+keyTokens = list.split(",")
 for tokens in keyTokens:
     keyPairs = tokens.split(":")
     print keyPairs

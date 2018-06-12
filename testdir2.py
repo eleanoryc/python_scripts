@@ -8,8 +8,10 @@ filename = '/Users/echeung/Documents/salesforce/python_script/testdir/newdir'
 pathlist = []
 if re.search('/',filename):
     pathlist = re.split('/',filename)
+    #print pathlist 
 
     length = len(pathlist)-1
+    print "length: " + str(length)
     filetoadd = filename
     path = ''
     for i in range(length):

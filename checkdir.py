@@ -11,7 +11,7 @@ for path_segment in filename.split('/'):
     if filetoadd:
         filetoadd += '/'
     filetoadd += path_segment
-    print filetoadd
+#    print filetoadd
     if not os.path.isdir('/'+filetoadd):
         print filetoadd + " not a dir"
         break
